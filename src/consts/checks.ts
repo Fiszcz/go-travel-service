@@ -1,0 +1,1 @@
+export const maxPossibleSpeed = 1200;

@@ -11,3 +11,8 @@ export const PointSchema = new mongoose.Schema({
         required: true
     }
 });
+
+export interface GeoPoint {
+    type: 'point',
+    coordinates: [number, number],
+}
