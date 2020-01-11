@@ -9,30 +9,33 @@ export class VisitsService {
     }
 
     async getCountVisitsForPins(pinIds: string[]) {
-        return this.visitModel.aggregate()
-            .match({'$pin': {'$in': pinIds}})
+        const pinsWithNumberOfVisits = await this.visitModel.aggregate()
+            .match({pin: {'$in': pinIds}})
             .group({
-                pin: '$pin',
+                _id: '$pin',
                 visits: { '$sum': 1},
             });
+
+        return pinIds.map((pinId) => ({pin: pinId, visits: (pinsWithNumberOfVisits.find(pin => pin._id.equals(pinId))?.visits || 0)}));
     }
 
-    async getVisitedPinsForUser(userId: string) {
+    getVisitedPinsForUser(userId: string) {
         return this.visitModel.find()
             .where('user').equals(userId);
     }
 
-    async getPinsSortByVisitCount() {
+    getPinsSortByVisitCount() {
         return this.visitModel.aggregate()
             .group({
-                pin: '$pin',
+                _id: '$pin',
+                pin: { '$first': '$pin'},
                 visits: { '$sum': 1 },
             })
             .sort({visits: -1});
     }
 
     async getCountVisitedPinsAndPointsForUser(userId: string) {
-        return this.visitModel.aggregate()
+        const visitsInfoForUser = await this.visitModel.aggregate()
             .match({user: userId})
             .lookup({
                 from: 'pins',
@@ -47,7 +50,9 @@ export class VisitsService {
                     visits: { "$sum" : 1 },
                     points: { "$sum": "$pin.points" },
                 }
-            )
+            );
+
+        return visitsInfoForUser.length ? visitsInfoForUser[0] : {visits: 0, points: 0};
     }
 
 }

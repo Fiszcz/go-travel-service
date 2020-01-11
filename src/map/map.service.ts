@@ -23,7 +23,7 @@ export class MapService {
         const currentTime = new Date();
 
         let isOkLocation = false;
-        if (userLastLocation.lastCheck === undefined) {
+        if (userLastLocation.lastCheck.location === undefined) {
             isOkLocation = true;
         } else {
             const timeDifferenceBetweenChecks = (currentTime.getTime() - userLastLocation.lastCheck.time.getTime()) / 1000 / 3600;
@@ -37,25 +37,30 @@ export class MapService {
         }
 
         if (isOkLocation) {
-            const foundPinsNearLocation = (await this.pinModel.find({
+            let foundPinsNearLocation = (await this.pinModel.find({
                 location: {
                     $near: {
                         $geometry: {
-                            type: 'point',
+                            type: 'Point',
                             coordinates: checkLocation.coordinates,
                         },
-                        $maxDistance: '$range',
+                        // TODO: use $radius
+                        $maxDistance: 50,
                     }
                 }
-            }).select('_id'))
-                .map((pin) => pin._id);
+            }).select('_id'));
+
+            foundPinsNearLocation = foundPinsNearLocation.map((pin) => pin._id);
 
             if (foundPinsNearLocation.length) {
                 for (let pin of foundPinsNearLocation)
-                    await this.visitModel.create({user: checkLocation.user, pin});
+                    await this.visitModel.create({user: checkLocation.user, pin}).catch(() => {});
             }
 
-            userLastLocation.lastCheck = {time: currentTime, location: {type: 'point', coordinates: checkLocation.coordinates}};
+            userLastLocation.lastCheck = {
+                time: currentTime,
+                location: {type: 'Point', coordinates: checkLocation.coordinates}
+            };
             await userLastLocation.save();
 
             return foundPinsNearLocation;

@@ -29,7 +29,7 @@ export class PeopleService {
 
     async getFollowingUsersWithDetails(userId: string) {
         const followingUsers = await this.getFollowingUsers(userId) as User[];
-        const aggregatePinsOfUsers = await this.visitModel.aggregate()
+        const usersWithAggregatedPins = await this.visitModel.aggregate()
             .match({user: {$in: followingUsers.map(following => following._id)}})
             .lookup({
                 from: 'pins',
@@ -40,17 +40,22 @@ export class PeopleService {
             .unwind('pin')
             .group(
                 {
-                    '_id': '$user',
-                    visits: { "$sum" : 1 },
-                    points: { "$sum": "$pin.points" },
+                    _id: '$user',
+                    visits: {"$sum": 1},
+                    points: {"$sum": "$pin.points"},
                 }
             );
-        return aggregatePinsOfUsers.map((pin) => ({...pin, ...followingUsers.find((following => following._id === pin._id))}));
+
+        return followingUsers.map((followingUser) => ({
+            ...followingUser.toObject(),
+            visits: 0,
+            points: 0, ...usersWithAggregatedPins.find((user) => user._id.equals(followingUser._id))
+        }));
     }
 
     async getFollowersUserWithDetails(userId: string) {
         const followersUser = await this.getFollowersUser(userId) as User[];
-        const aggregatePinsOfUsers = await this.visitModel.aggregate()
+        const usersWithAggregatedPins = await this.visitModel.aggregate()
             .match({user: {$in: followersUser.map(follower => follower._id)}})
             .lookup({
                 from: 'pins',
@@ -61,12 +66,17 @@ export class PeopleService {
             .unwind('pin')
             .group(
                 {
-                    '_id': '$user',
-                    visits: { "$sum" : 1 },
-                    points: { "$sum": "$pin.points" },
+                    _id: '$user',
+                    visits: {"$sum": 1},
+                    points: {"$sum": "$pin.points"},
                 }
             );
-        return aggregatePinsOfUsers.map((pin) => ({...pin, ...followersUser.find((follower => follower._id === pin._id))}))
+
+        return followersUser.map((follower) => ({
+            ...follower.toObject(),
+            visits: 0,
+            points: 0, ...usersWithAggregatedPins.find((user) => user._id.equals(follower._id))
+        }));
     }
 
     async followUser(followUser: FollowUser) {
@@ -105,13 +115,13 @@ export class PeopleService {
     async searchUsers(phrase: string) {
         const searchPhraseREGEX = new RegExp('^' + phrase, 'i');
         return this.userModel.find({
-            $or: [{ firstName: searchPhraseREGEX}, { lastName: searchPhraseREGEX }]
+            $or: [{firstName: searchPhraseREGEX}, {lastName: searchPhraseREGEX}]
         }).select('_id firstName lastName photoProfile');
     }
 
     async getUserDetails(userId: string) {
         const userDetails = await this.userModel.findById(userId)
-            .select('followers following profilePhoto firstName lastName');
+            .select('followers following profilePhoto firstName lastName').lean();
         const detailsAboutVisits = await this.visitModel.aggregate()
             .match({user: userId})
             .lookup({
@@ -124,12 +134,12 @@ export class PeopleService {
             .group(
                 {
                     '_id': '$user',
-                    visits: { "$sum" : 1 },
-                    points: { "$sum": "$pin.points" },
+                    visits: {"$sum": 1},
+                    points: {"$sum": "$pin.points"},
                 }
             );
 
-        return {...userDetails, ...detailsAboutVisits[0]};
+        return {...userDetails, visits: 0, points: 0, ...detailsAboutVisits[0]};
     }
 
 }

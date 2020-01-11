@@ -4,6 +4,7 @@ import {Model} from "mongoose";
 import {Post} from "../schemas/posts.schema";
 import {CreatePostDto} from "./dtos/CreatePost.interfaces";
 import {LikePost} from "./interfaces/LikePost.interfaces";
+import * as mongoose from "mongoose";
 
 @Injectable()
 export class PostsService {
@@ -24,7 +25,7 @@ export class PostsService {
 
     async getPostsForUser(userId: string) {
         return this.postModel.find()
-            .where('user').equals(userId);
+            .where('user').equals(userId).lean();
     }
 
     async likePost(likePost: LikePost) {
@@ -34,10 +35,11 @@ export class PostsService {
     }
 
     async unlikePost(unlikePost: LikePost) {
-        const post = await this.postModel.findById(unlikePost.userId);
+        const post = await this.postModel.findById(unlikePost.postId);
 
         for (let i = 0; i < post.likes.length; i++) {
-            if (post.likes[i] === unlikePost.userId) {
+            // @ts-ignore
+            if (post.likes[i].equals(unlikePost.userId)) {
                 post.likes.splice(i, 1);
                 break;
             }
