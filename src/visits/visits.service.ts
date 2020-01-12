@@ -13,6 +13,7 @@ export class VisitsService {
             .match({pin: {'$in': pinIds}})
             .group({
                 _id: '$pin',
+                pin: {$first: '$pin'},
                 visits: { '$sum': 1},
             });
 
@@ -47,6 +48,7 @@ export class VisitsService {
             .group(
                 {
                     '_id': '$user',
+                    user: {$first: '$user'},
                     visits: { "$sum" : 1 },
                     points: { "$sum": "$pin.points" },
                 }

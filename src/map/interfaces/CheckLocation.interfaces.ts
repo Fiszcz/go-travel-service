@@ -1,4 +1,9 @@
-export interface CheckLocation {
+import {ApiProperty} from "@nestjs/swagger";
+
+export class CheckLocation {
+    @ApiProperty()
     user: string;
-    coordinates: [number, number],
+
+    @ApiProperty({type: [Number]})
+    coordinates: [number, number];
 }

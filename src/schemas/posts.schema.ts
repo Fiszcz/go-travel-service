@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import {ImageInterface, ImageSchema} from "./image.schema";
 import {User} from "./user.schema";
-import {Pin} from "./pin.schema";
+import {ApiProperty} from "@nestjs/swagger";
 
 export const PostsSchema = new mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'users'},
@@ -12,11 +12,22 @@ export const PostsSchema = new mongoose.Schema({
     text: {type: String, default: ''},
 });
 
-export interface Post extends mongoose.Document {
-    user: string | User;
-    pin: string | Pin;
-    date: Date;
+export class Post extends mongoose.Document {
+    @ApiProperty()
+    user: string;
+
+    @ApiProperty()
+    pin: string;
+
+    @ApiProperty()
+    date: string;
+
+    @ApiProperty({type: [ImageInterface]})
     multimedia: ImageInterface[];
+
+    @ApiProperty()
     likes: (string | User)[];
+
+    @ApiProperty()
     text: string;
 }

@@ -3,7 +3,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {Visit} from "../schemas/visit.schema";
 import {User} from "../schemas/user.schema";
-import {FollowUser, UnfollowUser} from "./interfaces/FollowUser.interfaces";
+import {BasicDataOfUser, FollowUser, UnfollowUser} from "./interfaces/People.interfaces";
 
 @Injectable()
 export class PeopleService {
@@ -41,6 +41,7 @@ export class PeopleService {
             .group(
                 {
                     _id: '$user',
+                    user: {$first: '$user'},
                     visits: {"$sum": 1},
                     points: {"$sum": "$pin.points"},
                 }

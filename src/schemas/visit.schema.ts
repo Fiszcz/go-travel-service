@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import {User} from "./user.schema";
 import {Pin} from "./pin.schema";
+import {ApiProperty} from "@nestjs/swagger";
 
 export const VisitSchema = new mongoose.Schema({
     date: {type: Date, default: Date.now},
@@ -10,8 +11,13 @@ export const VisitSchema = new mongoose.Schema({
 
 VisitSchema.index({user: 1, pin: 1}, {unique: true});
 
-export interface Visit extends mongoose.Document {
+export class Visit extends mongoose.Document {
+    @ApiProperty()
     date: Date;
+
+    @ApiProperty()
     user: string | User;
+
+    @ApiProperty()
     pin: string | Pin;
 }

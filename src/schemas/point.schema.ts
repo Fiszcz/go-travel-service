@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import {ApiProperty} from "@nestjs/swagger";
 
 export const PointSchema = new mongoose.Schema({
     type: {
@@ -12,7 +13,10 @@ export const PointSchema = new mongoose.Schema({
     }
 });
 
-export interface GeoPoint {
-    type: 'Point',
-    coordinates: [number, number],
+export class GeoPoint {
+    @ApiProperty()
+    type: 'Point';
+
+    @ApiProperty({type: [Number]})
+    coordinates: [number, number];
 }

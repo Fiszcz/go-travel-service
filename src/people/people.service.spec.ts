@@ -5,7 +5,7 @@ import * as mongoose from "mongoose";
 import {UsersSchema} from "../schemas/user.schema";
 import {VisitSchema} from "../schemas/visit.schema";
 import {UserModel} from "../../test/database/databaseModels";
-import {FollowUser, UnfollowUser} from "./interfaces/FollowUser.interfaces";
+import {FollowUser, UnfollowUser} from "./interfaces/People.interfaces";
 
 describe('PeopleService', () => {
     let service: PeopleService;

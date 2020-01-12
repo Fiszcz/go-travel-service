@@ -1,9 +1,6 @@
 import {ApiProperty} from "@nestjs/swagger";
 
-export class LikePost {
+export class AuthenticationInterface {
     @ApiProperty()
     userId: string;
-
-    @ApiProperty()
-    postId: string;
 }

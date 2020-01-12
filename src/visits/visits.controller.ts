@@ -1,5 +1,8 @@
 import {Controller, Get, Param, Query} from '@nestjs/common';
 import {VisitsService} from "./visits.service";
+import {ApiParam, ApiQuery, ApiResponse, getSchemaPath} from "@nestjs/swagger";
+import {PinWithNumberOfVisits, VisitsAndPointsOfUser} from "./interfaces/Visits.interfaces";
+import {Visit} from "../schemas/visit.schema";
 
 @Controller('visits')
 export class VisitsController {
@@ -7,6 +10,13 @@ export class VisitsController {
     }
 
     @Get('statistics')
+    @ApiQuery({name: 'option', schema: {enum: ['numberOfVisits', 'sortedByNumberOfVisits', 'numberOfVisitsAndPoints']}})
+    @ApiQuery({name: 'pinIds', type: [String], required: false})
+    @ApiQuery({name: 'userId', type: String, required: false})
+    @ApiResponse({status: 200, schema: {oneOf: [
+                { $ref: getSchemaPath(PinWithNumberOfVisits) },
+                { $ref: getSchemaPath(VisitsAndPointsOfUser) },
+            ]}})
     findPinsWithStatistics(
         @Query('option') option: 'numberOfVisits' | 'sortedByNumberOfVisits' | 'numberOfVisitsAndPoints',
         @Query('pinIds') pinIds: string[],
@@ -22,6 +32,8 @@ export class VisitsController {
     }
 
     @Get()
+    @ApiParam({name: 'userId', type: String})
+    @ApiResponse({status: 200, type: Visit})
     findVisitsOfUser(@Param('userId') userId) {
         return this.visitsService.getVisitedPinsForUser(userId);
     }

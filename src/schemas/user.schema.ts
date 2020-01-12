@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import {ImageInterface, ImageSchema} from "./image.schema";
 import {GeoPoint, PointSchema} from "./point.schema";
+import {ApiProperty} from "@nestjs/swagger";
 
 export const UsersSchema = new mongoose.Schema({
     email: {type: String, unique: true},
@@ -18,18 +19,19 @@ export const UsersSchema = new mongoose.Schema({
     lastName: {type: String, default: ''},
 });
 
-export interface User extends mongoose.Document {
-    email: string,
-    password: string,
-    facebook: string,
-    google: string,
-    followers: (User | string)[],
-    following: (User | string)[],
-    profilePhoto: ImageInterface,
+export class User extends mongoose.Document {
+    @ApiProperty()
+    email: string;
+    password: string;
+    facebook: string;
+    google: string;
+    followers: (User | string)[];
+    following: (User | string)[];
+    profilePhoto: ImageInterface;
     lastCheck: {
-        time: Date,
-        location: GeoPoint,
-    },
-    firstName: string,
-    lastName: string,
+        time: Date;
+        location: GeoPoint;
+    };
+    firstName: string;
+    lastName: string;
 }

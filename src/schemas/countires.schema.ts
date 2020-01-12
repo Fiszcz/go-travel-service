@@ -1,12 +1,16 @@
 import * as mongoose from 'mongoose';
 import {ImageInterface, ImageSchema} from "./image.schema";
+import {ApiProperty} from "@nestjs/swagger";
 
 export const CountriesSchema = new mongoose.Schema({
     flag: ImageSchema,
     name: {type: String, unique: true},
 });
 
-export interface Country extends mongoose.Document {
+export class Country extends mongoose.Document {
+    @ApiProperty()
     flag: ImageInterface;
+
+    @ApiProperty()
     name: string;
 }
