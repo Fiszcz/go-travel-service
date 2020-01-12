@@ -7,7 +7,7 @@ import {Country} from "../schemas/countires.schema";
 export class CountryService {
     constructor(@InjectModel('countries') private readonly countryModel: Model<Country>){}
 
-    async getCountries() {
+    getCountries() {
         return this.countryModel.find();
     }
 

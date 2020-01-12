@@ -4,7 +4,6 @@ import {Model} from "mongoose";
 import {Post} from "../schemas/posts.schema";
 import {CreatePostDto} from "./dtos/CreatePost.interfaces";
 import {LikePost} from "./interfaces/LikePost.interfaces";
-import * as mongoose from "mongoose";
 
 @Injectable()
 export class PostsService {
@@ -13,7 +12,8 @@ export class PostsService {
     ) {}
 
     async create(createPostDto: CreatePostDto) {
-        const createdPost = new this.postModel(createPostDto);
+        const {userId, ...post} = createPostDto;
+        const createdPost = new this.postModel({...post, user: userId});
         return await createdPost.save();
     };
 

@@ -37,7 +37,7 @@ describe('PostsService', () => {
 
         const newPost: CreatePostDto = {
             pin: pins[15]._id,
-            user: user._id,
+            userId: user._id,
             text: 'New post',
         };
 

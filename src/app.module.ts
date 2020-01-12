@@ -10,7 +10,7 @@ import {VisitsModule} from './visits/visits.module';
 import {CountryModule} from './country/country.module';
 
 @Module({
-    imports: [MongooseModule.forRoot('mongodb://localhost:27017'), HomeModule, MapModule, PeopleModule, PinsModule, PostsModule, UsersModule, VisitsModule, CountryModule],
+    imports: [MongooseModule.forRoot('mongodb://localhost:27017/test'), HomeModule, MapModule, PeopleModule, PinsModule, PostsModule, UsersModule, VisitsModule, CountryModule],
 })
 export class AppModule {
 }

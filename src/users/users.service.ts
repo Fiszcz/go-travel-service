@@ -33,9 +33,9 @@ export class UsersService {
     }
 
     async setPhoto(photoDetails: SetPhoto) {
-        const user = await this.userModel.findById(photoDetails.user);
+        const user = await this.userModel.findById(photoDetails.userId);
 
-        user.profilePhoto = photoDetails.photo;
+        user.profilePhoto = photoDetails.profilePhoto;
 
         await user.save();
     }
