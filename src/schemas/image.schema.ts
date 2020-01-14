@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import {ApiProperty} from "@nestjs/swagger";
 
 export const ImageSchema = new mongoose.Schema({
-    image: Buffer,
+    image: String,
     type_of_image: {type: String, enum: ['jpeg', 'png', 'jpg']},
     width_of_image: Number,
     height_of_image: Number,
@@ -10,7 +10,7 @@ export const ImageSchema = new mongoose.Schema({
 
 export class ImageInterface {
     @ApiProperty()
-    image: Buffer | string;
+    image: string;
 
     @ApiProperty()
     type_of_image: 'jpeg' | 'png';

@@ -20,7 +20,7 @@ export class Post extends mongoose.Document {
     pin: string;
 
     @ApiProperty()
-    date: string;
+    date: Date;
 
     @ApiProperty({type: [ImageInterface]})
     multimedia: ImageInterface[];
